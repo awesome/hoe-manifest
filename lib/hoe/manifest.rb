@@ -5,6 +5,7 @@ require 'yaml'
 require 'pp'
 require 'logger'
 require 'fileutils'
+require 'pathname'
 
 
 # our own code
@@ -46,6 +47,8 @@ class Hoe
   alias_method :read_manifest,     :read_manifest_new
 
 end  # class Hoe
+
+
 
 
 module Hoe::Manifest
@@ -94,7 +97,7 @@ module Hoe::Manifest
     
       puts "[hoe-manifest] extra_rdoc_files:"
       pp spec.extra_rdoc_files
-    end
+    end # task
 
 
     desc "Generate a #{name}.gemspec file"
@@ -102,38 +105,105 @@ module Hoe::Manifest
       File.open( "#{name}.gemspec", 'w' ) do |file|
         file.puts spec.to_ruby
       end
-    end
+    end # task
     
     desc 'Create Manifest.tmp (for debugging check_manifest)'
     task 'manifest:tmp' do
-      require 'find'
-      files = []
-      with_config do |config, _|
-        exclusions = config['exclude']
-
-        puts "[hoe-manifest] exclude: >>#{exclusions}<<"
-
-        Find.find( '.' ) do |path|
-          unless File.file?( path )
-            puts "[hoe-manifest] skipping path (not a file): >>#{path}<<"
-            next
-          end
-          if path =~ exclusions
-            puts "[hoe-manifest] skipping path (exclude match): >>#{path}<<"
-            next
-          end
-          files << path[2..-1]
-        end
-        files = files.sort.join( "\n" )
+      files = find_manifest_files()
         
-        File.open( 'Manifest.tmp', 'w' ) do |file|
-          file.puts files
-        end
+      File.open( 'Manifest.tmp', 'w' ) do |file|
+        file.puts files.join( "\n" )
       end
     end  # task
     
+    desc 'Check manifest (follow symbolic links)'
+    task 'manifest:check' do
+      check_manifest_w_follow_sym_links()
+    end  # task
+
+
   end # method define_manifest_tasks
   
+
+##
+# Verifies your Manifest.txt against the files in your project.
+
+def find_manifest_files( root='.' )
+  files = []
+  with_config do |config, _|
+    exclusions = config['exclude']
+
+    puts "[hoe-manifest] exclude: >>#{exclusions}<<"
+
+    ## NB: Find.find( '.' )  will NOT follow sym links
+    ##  thus, use our own file finder -> find_all_files( '.' )
+
+    find_all_files( root ).each do |path|
+      if path =~ exclusions
+        puts "[hoe-manifest] skipping path (exclude match): >>#{path}<<"
+        next
+      end
+      files << path
+    end
+  end
+  files = files.sort
+end # method find_manifest_files
+
+
+def check_manifest_w_follow_sym_links
+
+    ## NB: assume DIFF is definded (included in standard debug hoe plugin)
+
+    f = 'Manifest.tmp'
+    files = find_manifest_files()
+
+    File.open( f, 'w' ) { |fp| fp.puts files.join( "\n" ) }
+
+    verbose = { :verbose => Rake.application.options.verbose }
+
+    begin
+      sh( "#{DIFF} -du Manifest.txt #{f}", verbose )
+    ensure
+      rm( f, verbose )
+    end
+    
+end  # check_manifest_w_follow_sym_links
+
+
+###############################################  
+#### todo/fix: move somewhere else for reuse
+##
+##  move to manman gem !! why? why not?
+
+
+def find_all_files( path )
+  
+  ## NB: Dir[ '**/*' ] and
+  ##    Find.find( '.' )  do NOT follow symbolic links
+  
+  files = find_all_files_worker( Pathname.new(path), 0 )
+  files = files.flatten
+  ## convert from pathname back to plain strings
+  files = files.map { |file| file.to_s }
+end
+
+def find_all_files_worker( path, depth )
+  ## puts "#{' '*depth}find_all('#{path}')"
+
+  files = path.children.map do |child|
+    if child.file?
+      child
+    elsif child.directory?
+      find_all_files_worker( child, depth+1 )
+    else
+      puts "*** warn: find_all_files - unknown pathname type (expected file|directory)"
+    end
+  end
+  files
+end
+
+
+
 end # module Hoe::Manifest
 
 
