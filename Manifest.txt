@@ -1,0 +1,6 @@
+History.md
+Manifest.txt
+README.md
+Rakefile
+lib/hoe/man.rb
+lib/hoe/man/version.rb
