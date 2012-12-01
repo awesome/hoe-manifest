@@ -69,11 +69,11 @@ module Hoe::Manifest
 
 
   def initialize_manifest
-    puts "[hoe-manifest] enter initialize_manifest"
+    puts "[hoe-manifest] enter initialize_<plugin>"
   end
 
   def define_manifest_tasks
-    puts "[hoe-manifest] enter define_manifest_tasks"
+    puts "[hoe-manifest] enter define_<plugin>_tasks"
     
     # extend release task
     #  - e.g. make check_manifest required - check if is already required?
@@ -148,6 +148,19 @@ def find_manifest_files( root='.' )
   end
   files = files.sort
 end # method find_manifest_files
+
+
+  ## see https://github.com/seattlerb/hoe/blob/master/lib/hoe/debug.rb
+
+  DIFF = if Hoe::WINDOZE
+           'diff.exe'
+         else
+           if system("gdiff", __FILE__, __FILE__)
+             'gdiff' # solaris and kin suck
+           else
+             'diff'
+           end
+         end unless defined? DIFF
 
 
 def check_manifest_w_follow_sym_links
