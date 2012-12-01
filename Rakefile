@@ -14,8 +14,10 @@ Hoe.spec 'hoe-man' do
   self.email   = 'gerald.bauer@example.com'
   
   # switch extension to .markdown for gihub formatting
-  self.readme_file  = 'README.md'
-  self.history_file = 'History.md'
+  #  - gets auto-added from Manifest.txt
+  #
+  # self.readme_file  = 'README.md'
+  # self.history_file = 'History.md'
   
-  # self.license = 'Public Domain'
+  self.licenses = ['Public Domain']
 end
