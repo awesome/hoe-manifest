@@ -2,7 +2,7 @@
 require 'hoe'
 require './lib/hoe/man/version.rb'
 
-Hoe.spec 'hoe-man' do
+Hoe.spec 'hoe-manifest' do
   self.version = Hoe::Man::VERSION
 
   self.summary = 'Hoe plugin - adds more manifest options.'
