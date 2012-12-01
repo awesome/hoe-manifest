@@ -1,14 +1,14 @@
 
 require 'hoe'
-require './lib/hoe/man/version.rb'
+require './lib/hoe/manifest/version.rb'
 
 Hoe.spec 'hoe-manifest' do
-  self.version = Hoe::Man::VERSION
+  self.version = Hoe::Manifest::VERSION
 
   self.summary = 'Hoe plugin - adds more manifest options.'
   self.description = summary
 
-  self.urls    = ['https://github.com/geraldb/hoe-man']
+  self.urls    = ['https://github.com/geraldb/hoe-manifest']
   
   self.author  = 'Gerald Bauer'
   self.email   = 'gerald.bauer@example.com'

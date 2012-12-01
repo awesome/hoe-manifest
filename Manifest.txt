@@ -2,5 +2,5 @@ History.md
 Manifest.txt
 README.md
 Rakefile
-lib/hoe/man.rb
-lib/hoe/man/version.rb
+lib/hoe/manifest.rb
+lib/hoe/manifest/version.rb

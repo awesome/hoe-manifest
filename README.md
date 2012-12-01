@@ -1,4 +1,4 @@
-# hoe-man
+# hoe-manifest
 
 Hoe plugin - adds more manifest options.
 
@@ -12,10 +12,10 @@ TBD
 
 Just install the gem:
 
-    $ gem install hoe-man
+    $ gem install hoe-manifest
 
 
 ## License
 
-The `hoe-man` scripts are dedicated to the public domain.
+The `hoe-manifest` scripts are dedicated to the public domain.
 Use it as you please with no restrictions whatsoever.
