@@ -43,7 +43,7 @@ module Hoe::Man
   end
 
   def extra_manifest=(path)
-    puts "[hoe-man] enter extra_manifest=(#{path})"
+    puts "[hoe-man] enter extra_manifest=('#{path}')"
     @extra_manifest_path = path
   end
 
